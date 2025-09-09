@@ -7,9 +7,12 @@ import {
   Patch,
   Post,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import type { Role } from 'src/types';
+import type { Role } from './types';
+import { CreateUserDto, UpdateUserDto } from './dtos/index.dto';
+import { ValidationPipe } from '@nestjs/common';
 
 // NOTE: Controllers are endpoint definition classes and handlers
 @Controller('users')
@@ -29,8 +32,12 @@ export class UsersController {
   }
 
   @Get(':id') // GET /users/:id
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  // findOne(@Param('id') id: string) {
+  //   return this.usersService.findOne(+id);
+  // }
+  // NOTE: With pipes, we can transform and validate incoming data
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
   }
 
   // NOTE: This cannot be here, cuz the previous endpoint already gets the id param,
@@ -41,20 +48,20 @@ export class UsersController {
   // }
 
   @Post() // POST /users
-  create(@Body() user: { name: string; age: number; role: Role }) {
+  create(@Body(ValidationPipe) user: CreateUserDto) {
     return this.usersService.create(user);
   }
 
   @Patch(':id') // PATCH /users/:id
   update(
-    @Param('id') id: string,
-    @Body() user: { name?: string; age?: number; role?: Role },
+    @Param('id', ParseIntPipe) id: number,
+    @Body(ValidationPipe) user: UpdateUserDto,
   ) {
-    return this.usersService.update(+id, user);
+    return this.usersService.update(id, user);
   }
 
   @Delete(':id') // DELETE /users/:id
-  delete(@Param('id') id: string) {
-    return this.usersService.delete(+id);
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.delete(id);
   }
 }

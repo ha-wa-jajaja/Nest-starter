@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import type { Role } from 'src/types';
+import type { Role } from 'src/users/types';
+import { CreateUserDto, UpdateUserDto } from './dtos/index.dto';
+import { NotFoundException } from '@nestjs/common';
 
 // NOTE: Providers are classes that can be injected as dependencies; they handle
 // business logic and data management
@@ -24,10 +26,16 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return this.users.find((user) => user.id === id);
+    const res = this.users.find((user) => user.id === id);
+
+    if (!res) {
+      throw new NotFoundException('User not found');
+    }
+
+    return res;
   }
 
-  create(user: { name: string; age: number; role: Role }) {
+  create(user: CreateUserDto) {
     const newUser = {
       id: this.users.length + 1,
       ...user,
@@ -36,7 +44,7 @@ export class UsersService {
     return newUser;
   }
 
-  update(id: number, user: { name?: string; age?: number; role?: Role }) {
+  update(id: number, user: UpdateUserDto) {
     const existingUser = this.findOne(id);
     if (!existingUser) {
       return null;
