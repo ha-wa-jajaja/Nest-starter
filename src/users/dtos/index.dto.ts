@@ -1,4 +1,3 @@
-import type { Role } from '../types';
 import { PartialType } from '@nestjs/mapped-types';
 import { IsString, IsInt, IsIn, IsNotEmpty } from 'class-validator';
 
@@ -13,7 +12,7 @@ export class CreateUserDto {
   @IsIn(['intern', 'employee', 'boss'], {
     message: 'Role invalid',
   })
-  role: Role;
+  role: 'intern' | 'employee' | 'boss';
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}

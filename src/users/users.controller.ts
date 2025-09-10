@@ -10,7 +10,6 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import type { Role } from './types';
 import { CreateUserDto, UpdateUserDto } from './dtos/index.dto';
 import { ValidationPipe } from '@nestjs/common';
 
@@ -22,7 +21,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get() // GET /users?role=string
-  findAll(@Query('role') role?: Role) {
+  findAll(@Query('role') role?: 'intern' | 'employee' | 'boss') {
     return this.usersService.findAll(role);
   }
 

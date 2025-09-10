@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import type { Role } from 'src/users/types';
 import { CreateUserDto, UpdateUserDto } from './dtos/index.dto';
 import { NotFoundException } from '@nestjs/common';
 
@@ -14,7 +13,7 @@ export class UsersService {
     { id: 4, name: 'John', age: 42, role: 'boss' },
   ];
 
-  findAll(role?: Role) {
+  findAll(role?: 'intern' | 'employee' | 'boss') {
     if (role) {
       return this.users.filter((user) => user.role === role);
     }
