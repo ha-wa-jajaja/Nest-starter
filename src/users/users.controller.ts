@@ -12,19 +12,23 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dtos/index.dto';
 import { ValidationPipe } from '@nestjs/common';
+import { Throttle, SkipThrottle } from '@nestjs/throttler';
 
 // NOTE: Controllers are endpoint definition classes and handlers
+@SkipThrottle() // NOTE: Skip rate limiting for all endpoints in this controller
 @Controller('users')
 export class UsersController {
   // NOTE: Dependency Injection via constructor; UsersService is injected, we're able
   // to use its methods to handle requests
   constructor(private readonly usersService: UsersService) {}
 
+  @SkipThrottle({ default: false }) // NOTE: Keep rate limiting for this specific endpoint
   @Get() // GET /users?role=string
   findAll(@Query('role') role?: 'intern' | 'employee' | 'boss') {
     return this.usersService.findAll(role);
   }
 
+  @Throttle({ demo: { ttl: 10000, limit: 1 } }) // NOTE: Custom rate limiting for this specific endpoint
   @Get('interns') // GET /users/interns
   findInterns() {
     return this.usersService.findInterns();
